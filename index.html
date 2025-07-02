@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Flexbox Interaktif Edukatif - Tailwind CSS</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.0.16/24/outline.min.css" rel="stylesheet" />
+	<style>
+		/* Custom scrollbar */
+		#container::-webkit-scrollbar {
+			height: 10px;
+			width: 10px;
+		}
+
+		#container::-webkit-scrollbar-track {
+			background: #e5e7eb;
+			/* gray-200 */
+			border-radius: 5px;
+		}
+
+		#container::-webkit-scrollbar-thumb {
+			background: #6366f1;
+			/* indigo-500 */
+			border-radius: 5px;
+			transition: background-color 0.3s ease;
+		}
+
+		#container::-webkit-scrollbar-thumb:hover {
+			background: #4338ca;
+			/* indigo-700 */
+		}
+
+		/* Dragging style */
+		.dragging {
+			opacity: 0.6;
+			transform: scale(1.1);
+			box-shadow: 0 10px 20px rgb(99 102 241 / 0.4);
+			cursor: grabbing !important;
+		}
+
+		/* Glow text effect */
+		.glow-text {
+			text-shadow: 0 0 6px #6366f1;
+		}
+
+		/* Canvas background di belakang */
+		#star-wave-bg {
+
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: -10;
+			pointer-events: none;
+			background: #fff;
+			/* latar belakang putih */
+		}
+	</style>
+</head>
+
+<body
+	class="bg-gradient-to-r from-indigo-50 via-white to-indigo-50 min-h-screen p-8 font-sans select-none relative overflow-x-hidden">
+
+	<!-- Canvas animasi bintang gelombang -->
+	<canvas id="star-wave-bg" aria-hidden="true"></canvas>
+
+	<header class="max-w-5xl mx-auto mb-12 text-center relative z-10">
+		<h1 class="text-4xl font-extrabold text-indigo-700 mb-3 glow-text drop-shadow-lg">
+			Demo Interaktif Flexbox dengan Tailwind CSS
+		</h1>
+		<p class="text-lg text-indigo-600 max-w-xl mx-auto leading-relaxed">
+			Eksplorasi properti <code
+				class="bg-indigo-100 rounded px-1 py-0.5 font-mono">flex-direction</code>, <code
+				class="bg-indigo-100 rounded px-1 py-0.5 font-mono">justify-content</code>, <code
+				class="bg-indigo-100 rounded px-1 py-0.5 font-mono">align-items</code>, dan <code
+				class="bg-indigo-100 rounded px-1 py-0.5 font-mono">align-content</code> secara
+			interaktif dengan drag & drop kotak.
+		</p>
+	</header>
+
+	<section class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-8 ring-1 ring-indigo-100 relative z-10">
+
+		<!-- Kontrol -->
+		<form id="controls" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6 mb-8"
+			aria-label="Kontrol pengaturan Flexbox">
+			<div>
+				<label for="flex-direction" class="block font-semibold text-indigo-700 mb-2">
+					<svg class="inline w-5 h-5 mr-1 text-indigo-500" fill="none"
+						stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M8 17l4-4 4 4"></path>
+						<path d="M12 12v9"></path>
+					</svg>
+					Flex Direction
+				</label>
+				<select id="flex-direction"
+					class="w-full border border-indigo-300 rounded-md shadow-sm px-3 py-2 text-indigo-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+					<option value="row" selected>row</option>
+					<option value="column">column</option>
+				</select>
+			</div>
+
+			<div>
+				<label for="justify-content" class="block font-semibold text-indigo-700 mb-2">
+					<svg class="inline w-5 h-5 mr-1 text-indigo-500" fill="none"
+						stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M4 12h16"></path>
+						<path d="M4 6h16"></path>
+						<path d="M4 18h16"></path>
+					</svg>
+					Justify Content
+				</label>
+				<select id="justify-content"
+					class="w-full border border-indigo-300 rounded-md shadow-sm px-3 py-2 text-indigo-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+					<option value="flex-start" selected>flex-start</option>
+					<option value="center">center</option>
+					<option value="flex-end">flex-end</option>
+					<option value="space-between">space-between</option>
+					<option value="space-around">space-around</option>
+					<option value="space-evenly">space-evenly</option>
+				</select>
+			</div>
+
+			<div>
+				<label for="align-items" class="block font-semibold text-indigo-700 mb-2">
+					<svg class="inline w-5 h-5 mr-1 text-indigo-500" fill="none"
+						stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M12 20v-16"></path>
+						<path d="M8 12h8"></path>
+					</svg>
+					Align Items
+				</label>
+				<select id="align-items"
+					class="w-full border border-indigo-300 rounded-md shadow-sm px-3 py-2 text-indigo-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+					<option value="flex-start" selected>flex-start</option>
+					<option value="center">center</option>
+					<option value="flex-end">flex-end</option>
+					<option value="stretch">stretch</option>
+					<option value="baseline">baseline</option>
+				</select>
+			</div>
+
+			<div>
+				<label for="align-content" class="block font-semibold text-indigo-700 mb-2">
+					<svg class="inline w-5 h-5 mr-1 text-indigo-500" fill="none"
+						stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M4 12h16"></path>
+						<path d="M4 6h16"></path>
+						<path d="M4 18h16"></path>
+					</svg>
+					Align Content
+				</label>
+				<select id="align-content"
+					class="w-full border border-indigo-300 rounded-md shadow-sm px-3 py-2 text-indigo-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+					<option value="flex-start" selected>flex-start</option>
+					<option value="center">center</option>
+					<option value="flex-end">flex-end</option>
+					<option value="space-between">space-between</option>
+					<option value="space-around">space-around</option>
+					<option value="stretch">stretch</option>
+				</select>
+			</div>
+
+			<div class="flex items-center space-x-3 mt-7">
+				<input type="checkbox" id="wrap-toggle" checked
+					class="w-5 h-5 text-indigo-600 focus:ring-indigo-500 rounded" />
+				<label for="wrap-toggle"
+					class="font-semibold text-indigo-700 cursor-pointer select-none">
+					Flex Wrap
+				</label>
+			</div>
+		</form>
+
+		<!-- Container flex -->
+		<div id="container"
+			class="flex flex-row flex-wrap border-4 border-indigo-300 rounded-xl p-6 gap-4 max-h-[350px] overflow-auto shadow-lg bg-gradient-to-b from-indigo-50 to-white"
+			aria-label="Kontainer Flexbox yang bisa diseret">
+			<!-- Kotak akan di-generate oleh JS -->
+		</div>
+
+		<!-- Output & Deskripsi -->
+		<section id="output-section"
+			class="mt-8 bg-indigo-50 rounded-xl p-6 ring-1 ring-indigo-300 text-indigo-900 font-semibold shadow-inner select-text"
+			aria-live="polite" aria-atomic="true">
+			<p id="output" class="mb-2 text-sm"></p>
+			<p id="combo-info" class="text-base leading-relaxed"></p>
+		</section>
+
+		<section class="mt-10 prose prose-indigo max-w-none text-indigo-800">
+			<h2>Penjelasan Properti Flexbox</h2>
+			<ul>
+				<li><code>flex-direction</code>: arah utama elemen di dalam kontainer (baris / kolom).
+				</li>
+				<li><code>justify-content</code>: posisi elemen sepanjang sumbu utama.</li>
+				<li><code>align-items</code>: posisi elemen sepanjang sumbu silang (cross axis).</li>
+				<li><code>align-content</code>: mengatur jarak antar baris / kolom jika menggunakan
+					<code>flex-wrap</code>.
+				</li>
+				<li><code>flex-wrap</code>: apakah elemen boleh membungkus ke baris / kolom baru.</li>
+				<li>Seret kotak untuk mengubah urutan (drag and drop).</li>
+			</ul>
+			<p>
+				Properti <code>align-content</code> hanya berfungsi jika ada lebih dari satu baris /
+				kolom (wrap aktif).
+				Jika wrap tidak aktif, properti ini tidak terlihat efeknya.
+			</p>
+		</section>
+	</section>
+
+	<script type="module" src="js/main.js"></script>
+</body>
+
+</html>
